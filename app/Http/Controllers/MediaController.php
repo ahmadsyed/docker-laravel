@@ -43,8 +43,28 @@ class MediaController extends Controller
             return response()->json(['status' => '500', 'msg' => 'somthing went wrong']);
         }
     }
+
+    //get videos via provider Id
+    public function getVideos(Request $request){
+        $this->validate($request, [
+            'provider_id' => 'required|exists:providers,id',
+        ]);
+        try{
+            $media_path = Media::select('path')->where('provider_id',$request->input('provider_id'))->first();
+            if(Storage::disk('s3')->exists($media_path)){
+                $file = Storage::get($media_path);
+                return response()->json(['status' => '200', 'file' => $file]);
+            }else{
+                return response()->json(['status' => '400', 'msg' => 'File not available']);
+            }
+        }catch(\Exception $e){
+            //todo:Rollback DB here
+            //dd($e);
+            return response()->json(['status' => '500', 'msg' => 'somthing went wrong']);
+        } 
+    }
     //validate files
-    public function validateFile($file_type,$provider_id){
+    private function validateFile($file_type,$provider_id){
         if($provider_id == 1){
                 $filevalidate = 'required';
             if($file_type=='image'){

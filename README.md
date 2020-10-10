@@ -9,3 +9,5 @@ project can be seen in action at http://localhost:8000/
 Migrations and seeder are written and should be running from start.sh file
 
 UI is written in welcome.blade.php and all routes are in routes/web.php
+
+Video list is rest API and its route can be found in routes/api.php
